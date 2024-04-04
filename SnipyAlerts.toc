@@ -1,0 +1,7 @@
+## Interface: 20501
+## Title: Snipy Alerts
+## Author: Snipy
+## Version: 1.0.0
+## SavedVariables: POSX, POSY
+
+snipy-alerts.lua
