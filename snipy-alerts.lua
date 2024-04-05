@@ -226,18 +226,31 @@ local function OnEvent(self, event)
                 OverPowerAlertFrame:Hide()
             end
 
-            -- for some reason slam shows as SPELL_DAMAGE when it's an instant Blood Surge proc
-            if(arr[13] == NAME_SLAM and arr[2] == "SPELL_DAMAGE") then
-                BloodSurgeAlertFrame:Hide()
+            -- check if Blood Surge is known
+            if(GetSpellInfo(NAME_BLOODSURGE)) then
+                -- for some reason slam shows as SPELL_DAMAGE when it's an instant Blood Surge proc
+                if(arr[13] == NAME_SLAM and arr[2] == "SPELL_DAMAGE") then
+                    BloodSurgeAlertFrame:Hide()
+                end
+
+                
+                if arr[12] == NAME_BLOODSURGE or arr[13] == NAME_BLOODSURGE then
+                    triggerBloodSurgeAlert()
+                end
+
+                            -- fade bloodsurge alert out when bloodsurge is still on CD
+                local bloodsurgeStart, bloodsurgeDuration, bloodsuregeEnabled, _ = GetSpellCooldown(NAME_BLOODSURGE)
+                local bsCD = bloodsurgeStart + bloodsurgeDuration - GetTime()
+                if(bsCD > 1.5) then
+                    BloodSurgeAlertFrame:SetAlpha(.2)
+                else
+                    BloodSurgeAlertFrame:SetAlpha(1)
+                end
             end
 
             -- below works (on swings and spells)
             if arr[12] == eventSearchingFor or arr[15] == eventSearchingFor then
                 triggerOverpowerAlert()
-            end
-
-            if arr[12] == NAME_BLOODSURGE or arr[13] == NAME_BLOODSURGE then
-                triggerBloodSurgeAlert()
             end
         end
 
@@ -248,15 +261,6 @@ local function OnEvent(self, event)
             OverPowerAlertFrame:SetAlpha(.2)
         else
             OverPowerAlertFrame:SetAlpha(1)
-        end
-
-        -- fade bloodsurge alert out when bloodsurge is still on CD
-        local bloodsurgeStart, bloodsurgeDuration, bloodsuregeEnabled, _ = GetSpellCooldown(NAME_BLOODSURGE)
-        local bsCD = bloodsurgeStart + bloodsurgeDuration - GetTime()
-        if(bsCD > 1.5) then
-            BloodSurgeAlertFrame:SetAlpha(.2)
-        else
-            BloodSurgeAlertFrame:SetAlpha(1)
         end
     end
 end
